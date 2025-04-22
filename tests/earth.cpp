@@ -21,10 +21,10 @@ TEST(Ellipsoid, base)
   Eigen::Vector3d ecef = WGS84::LLH2ECEF(llh_true);
   Eigen::Vector3d llh = WGS84::ECEF2LLH(ecef_true);
 
-  // GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << ecef_true.transpose();
-  // GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << llh_true.transpose();
-  // GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << ecef.transpose();
-  // GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << llh.transpose();
+  GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << ecef_true.transpose();
+  GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << llh_true.transpose();
+  GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << ecef.transpose();
+  GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << llh.transpose();
 
   EXPECT_TRUE(ecef_true.isApprox(ecef, 1e-6));
   EXPECT_TRUE(llh_true.isApprox(llh, 1e-6));
