@@ -2,8 +2,6 @@
 #include <gtest/gtest.h>
 #include <iomanip>
 using namespace coordinate_converter;
-constexpr double operator"" _deg(long double x) { return x / 180.0 * M_PI; }
-constexpr double operator"" _deg(unsigned long long x) { return x / 180.0 * M_PI; }
 
 TEST(Ellipsoid, type)
 {

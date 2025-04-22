@@ -74,8 +74,3 @@ install(FILES
     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
-
-# 测试配置
-include(CTest)
-enable_testing()
-
