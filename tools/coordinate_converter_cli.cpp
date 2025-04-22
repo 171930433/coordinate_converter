@@ -131,6 +131,7 @@ int main(int argc, char *argv[])
 {
     // 初始化glog
     google::InitGoogleLogging(argv[0]);
+    google::LogToStderr();
 
     // 设置程序使用说明
     std::string usage = R"(

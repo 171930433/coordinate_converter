@@ -21,10 +21,10 @@ TEST(Ellipsoid, base)
   Eigen::Vector3d ecef = WGS84::LLH2ECEF(llh_true);
   Eigen::Vector3d llh = WGS84::ECEF2LLH(ecef_true);
 
-  GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << ecef_true.transpose();
-  GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << llh_true.transpose();
-  GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << ecef.transpose();
-  GTEST_LOG_(INFO) << std::setprecision(10) << std::fixed << llh.transpose();
+  GTEST_LOG_(INFO) << std::setprecision(6) << std::fixed << ecef_true.transpose();
+  GTEST_LOG_(INFO) << std::setprecision(6) << std::fixed << llh_true.transpose();
+  GTEST_LOG_(INFO) << std::setprecision(6) << std::fixed << ecef.transpose();
+  GTEST_LOG_(INFO) << std::setprecision(6) << std::fixed << llh.transpose();
 
   EXPECT_TRUE(ecef_true.isApprox(ecef, 1e-6));
   EXPECT_TRUE(llh_true.isApprox(llh, 1e-6));
@@ -42,11 +42,11 @@ TEST(Ellipsoid, origin)
   Eigen::Vector3d enu = wgs84.LLH2ENU(llh_true);
   Eigen::Vector3d llh = wgs84.ENU2LLH(enu_true);
 
-  GTEST_LOG_(INFO) << "origin " << std::setprecision(10) << std::fixed << (origin).transpose();
-  GTEST_LOG_(INFO) << "llh_true " << std::setprecision(10) << std::fixed << (llh_true).transpose();
-  GTEST_LOG_(INFO) << "enu_true " << std::setprecision(10) << std::fixed << (enu_true).transpose();
-  GTEST_LOG_(INFO) << "enu 2 llh " << std::setprecision(10) << std::fixed << (llh).transpose();
-  GTEST_LOG_(INFO) << "llh 2 enu " << std::setprecision(10) << std::fixed << (enu).transpose();
+  GTEST_LOG_(INFO) << "origin " << std::setprecision(6) << std::fixed << (origin).transpose();
+  GTEST_LOG_(INFO) << "llh_true " << std::setprecision(6) << std::fixed << (llh_true).transpose();
+  GTEST_LOG_(INFO) << "enu_true " << std::setprecision(6) << std::fixed << (enu_true).transpose();
+  GTEST_LOG_(INFO) << "enu 2 llh " << std::setprecision(6) << std::fixed << (llh).transpose();
+  GTEST_LOG_(INFO) << "llh 2 enu " << std::setprecision(6) << std::fixed << (enu).transpose();
 
   EXPECT_TRUE(enu_true.isApprox(enu, 1e-4));
   EXPECT_TRUE(llh_true.isApprox(llh, 1e-8));
