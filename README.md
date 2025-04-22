@@ -5,10 +5,10 @@
 ## 功能特点
 
 - 支持WGS84椭球体上的坐标转换
-- 提供纬经度高度(LLH)到地心地固坐标系(ECEF)的转换
-- 提供地心地固坐标系(ECEF)到纬经度高度(LLH)的转换
-- 提供纬经度高度(LLH)到东北天坐标系(ENU)的转换
-- 提供东北天坐标系(ENU)到纬经度高度(LLH)的转换
+- 提供纬度经度高度(LLH)到地心地固坐标系(ECEF)的转换
+- 提供地心地固坐标系(ECEF)到纬度经度高度(LLH)的转换
+- 提供纬度经度高度(LLH)到东北天坐标系(ENU)的转换
+- 提供东北天坐标系(ENU)到纬度经度高度(LLH)的转换
 - 支持自定义椭球体参数
 
 ## 依赖项
@@ -41,9 +41,9 @@ using namespace coordinate_converter;
 // 创建WGS84椭球体实例
 WGS84 wgs84;
 
-// 定义纬经度高度坐标 (经度, 纬度, 高度)
-// 注意：纬经度单位为弧度
-Eigen::Vector3d llh{120.0 * M_PI / 180.0, 30.0 * M_PI / 180.0, 250.0};
+// 定义纬度经度高度坐标 (纬度, 经度, 高度)
+// 注意：纬度和经度单位为弧度，高度单位为米
+Eigen::Vector3d llh{30.0 * M_PI / 180.0, 120.0 * M_PI / 180.0, 250.0};
 
 // 转换为ECEF坐标
 Eigen::Vector3d ecef = wgs84.LLH2ECEF(llh);
@@ -56,17 +56,30 @@ Eigen::Vector3d llh_recovered = wgs84.ECEF2LLH(ecef);
 
 ```cpp
 // 设置原点
-Eigen::Vector3d origin{120.0 * M_PI / 180.0, 30.0 * M_PI / 180.0, 0.0};
+Eigen::Vector3d origin{30.0 * M_PI / 180.0, 120.0 * M_PI / 180.0, 0.0};
 WGS84 wgs84(origin);
 
-// 定义纬经度高度坐标
-Eigen::Vector3d llh{120.005 * M_PI / 180.0, 30.005 * M_PI / 180.0, 10.0};
+// 定义相对于原点的纬度经度高度坐标
+Eigen::Vector3d llh{30.005 * M_PI / 180.0, 120.005 * M_PI / 180.0, 10.0};
 
 // 转换为ENU坐标
 Eigen::Vector3d enu = wgs84.LLH2ENU(llh);
 
 // 从ENU坐标转回LLH坐标
 Eigen::Vector3d llh_recovered = wgs84.ENU2LLH(enu);
+```
+
+### 使用字面量操作符
+
+为了简化角度到弧度的转换，库提供了字面量操作符：
+
+```cpp
+// 使用字面量操作符定义角度
+constexpr double operator"" _deg(long double x) { return x / 180.0 * M_PI; }
+constexpr double operator"" _deg(unsigned long long x) { return x / 180.0 * M_PI; }
+
+// 使用字面量操作符定义坐标
+Eigen::Vector3d llh{30.0_deg, 120.0_deg, 250.0};
 ```
 
 ## 主要接口
@@ -114,10 +127,10 @@ Eigen::Vector3d LLH2ENU(const Eigen::Vector3d &pos) const;
 Eigen::Vector3d ENU2LLH(const Eigen::Vector3d &pos) const;
 ```
 
-- `LLH2ECEF`：将纬经度高度坐标转换为地心地固坐标系坐标
-- `ECEF2LLH`：将地心地固坐标系坐标转换为纬经度高度坐标
-- `LLH2ENU`：将纬经度高度坐标转换为东北天坐标系坐标
-- `ENU2LLH`：将东北天坐标系坐标转换为纬经度高度坐标
+- `LLH2ECEF`：将纬度经度高度坐标转换为地心地固坐标系坐标
+- `ECEF2LLH`：将地心地固坐标系坐标转换为纬度经度高度坐标
+- `LLH2ENU`：将纬度经度高度坐标转换为东北天坐标系坐标
+- `ENU2LLH`：将东北天坐标系坐标转换为纬度经度高度坐标
 
 #### 坐标变换
 
@@ -137,21 +150,23 @@ using WGS84 = Ellipsoid<WGS84Para>;
 
 ## 示例
 
-### 纬经度高度到ECEF的转换
+### 纬度经度高度到ECEF的转换
 
 ```cpp
 WGS84 wgs84;
-Eigen::Vector3d llh{120.0 * M_PI / 180.0, 30.0 * M_PI / 180.0, 250.0};
+Eigen::Vector3d llh{30.0_deg, 120.0_deg, 250.0};
 Eigen::Vector3d ecef = wgs84.LLH2ECEF(llh);
+// 预期结果: {-2764128.3196464167, 4787610.6882675830, 3170373.7353836372}
 ```
 
-### 纬经度高度到ENU的转换
+### 纬度经度高度到ENU的转换
 
 ```cpp
-Eigen::Vector3d origin{120.0 * M_PI / 180.0, 30.0 * M_PI / 180.0, 0.0};
+Eigen::Vector3d origin{30.0_deg, 120.0_deg, 0.0};
 WGS84 wgs84(origin);
-Eigen::Vector3d llh{120.005 * M_PI / 180.0, 30.005 * M_PI / 180.0, 10.0};
+Eigen::Vector3d llh{30.005_deg, 120.005_deg, 10.0};
 Eigen::Vector3d enu = wgs84.LLH2ENU(llh);
+// 预期结果: {0, 10, 0}
 ```
 
 ## 测试
@@ -165,8 +180,8 @@ cd build
 
 ## 许可证
 
-[待定]
+本项目采用 MIT 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件。
 
 ## 贡献
 
-欢迎提交问题和拉取请求！ 
+大萝卜欢迎提交问题和拉取请求！ 
