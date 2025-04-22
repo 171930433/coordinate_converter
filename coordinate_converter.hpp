@@ -21,11 +21,11 @@ public:
 
 public:
   static constexpr void LLH2ECEF(double const* pos, double* xyz) {
-    double const b = pos[0];
-    double const l = pos[1];
-    double const h = pos[2];
-    double const n = N(b);
-    double const cb = cos(b);
+    double const& b = pos[0];
+    double const& l = pos[1];
+    double const& h = pos[2];
+    double const& n = N(b);
+    double const& cb = cos(b);
     xyz[0] = (n + h) * cb * cos(l);
     xyz[1] = (n + h) * cb * sin(l);
     xyz[2] = (n * (1 - _e1 * _e1) + h) * sin(b);
@@ -33,7 +33,7 @@ public:
 
   static constexpr void ECEF2LLH(double const* xyz, double* pos) {
     double const e1_2 = _e1 * _e1;
-    double r2 = xyz[0] * xyz[0] + xyz[1] * xyz[1];
+    double const r2 = std::hypot(xyz[0], xyz[1]);
     double v = _a;
     double z = xyz[2];
     double sinp = 0;
@@ -51,8 +51,8 @@ public:
 
   static Eigen::Matrix3d Pos2Cne(const Eigen::Vector3d& pos) {
     using namespace Eigen;
-    double b = pos[0];
-    double l = pos[1];
+    double const& b = pos[0];
+    double const& l = pos[1];
     Matrix3d re = (AngleAxisd(-(M_PI / 2 - b), Vector3d::UnitX()) * AngleAxisd(-(M_PI / 2 + l), Vector3d::UnitZ()))
                     .toRotationMatrix();
     return re;
@@ -78,18 +78,18 @@ public:
   }
 
   Eigen::Vector3d LLH2ENU(const Eigen::Vector3d& pos) const {
-    assert(origin_cne_.norm() != 0);
+    assert(origin_cne_.isZero(1e-12));
     return origin_cne_ * (LLH2ECEF(pos) - origin_ecef_);
   }
   Eigen::Vector3d ENU2LLh(const Eigen::Vector3d& pos) const {
-    assert(origin_cne_.norm() != 0);
+    assert(origin_cne_.isZero(1e-12));
     return ECEF2LLH(origin_cne_ + origin_cne_.transpose() * pos);
   }
 
   static Eigen::Vector3d ENU2LLH(const Eigen::Vector3d& pos, const Eigen::Vector3d& origin) {
-    Eigen::Vector3d origin_ecef = LLH2ECEF(origin);
-    Eigen::Matrix3d c_ne = Pos2Cne(origin);
-    Eigen::Vector3d pos_llh = ECEF2LLH(c_ne.transpose() * pos + origin_ecef);
+    Eigen::Vector3d const origin_ecef = LLH2ECEF(origin);
+    Eigen::Matrix3d const c_ne = Pos2Cne(origin);
+    Eigen::Vector3d const pos_llh = ECEF2LLH(c_ne.transpose() * pos + origin_ecef);
     return pos_llh;
   }
 
