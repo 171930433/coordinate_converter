@@ -21,6 +21,12 @@ target_include_directories(coordinate_converter
 # 链接依赖
 target_link_libraries(coordinate_converter INTERFACE Eigen3::Eigen)
 
+# 添加命令行工具
+option(BUILD_TOOLS "Build command line tools" ON)
+if(BUILD_TOOLS)
+    add_subdirectory(tools)
+endif()
+
 option(ENABLE_TESTS "ENABLE_TESTS OPTIONS" ON)
 if(ENABLE_TESTING)
   include(CTest)
