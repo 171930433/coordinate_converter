@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "*.pb.txt": "prototxt",
+    "core": "cpp"
+  }
+}

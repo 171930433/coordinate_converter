@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.10.0)
 
 project(coordinate_converter VERSION 0.1.0 LANGUAGES C CXX)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(Eigen3 CONFIG REQUIRED)
 
 # 创建 header-only 库
@@ -17,6 +20,13 @@ target_include_directories(coordinate_converter
 
 # 链接依赖
 target_link_libraries(coordinate_converter INTERFACE Eigen3::Eigen)
+
+option(ENABLE_TESTS "ENABLE_TESTS OPTIONS" ON)
+if(ENABLE_TESTING)
+  include(CTest)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
 
 # 安装配置
 include(GNUInstallDirs)
