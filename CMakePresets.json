@@ -11,7 +11,8 @@
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_TOOLCHAIN_FILE": "",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "ENABLE_TESTING": "ON"
+        "ENABLE_TESTING": "ON",
+        "BUILD_TOOLS" : "ON"
       }
     },
     {
@@ -22,7 +23,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-        "ENABLE_TESTING": "ON"
+        "ENABLE_TESTING": "ON",
+        "BUILD_TOOLS" : "ON"
       }
     }
   ],
