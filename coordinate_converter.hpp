@@ -48,7 +48,7 @@ namespace coordinate_converter
 
     void SetOrigin(Eigen::Vector3d const &origin)
     {
-      Ten_ = Eigen::Translation3d(LLH2ECEF(origin)) * Eigen::Quaterniond(Pos2Cne(origin));
+      Ten_ = Eigen::Translation3d(LLH2ECEF(origin)) * Pos2Qne(origin);
     }
 
   public:
@@ -84,11 +84,10 @@ namespace coordinate_converter
       pos[2] = sqrt(r2 + z * z) - v;
     }
 
-    static Eigen::Matrix3d Pos2Cne(const Eigen::Vector3d &pos)
+    static Eigen::Quaterniond Pos2Qne(const Eigen::Vector3d &pos)
     {
       using namespace Eigen;
-      return (AngleAxisd(-(M_PI / 2 - pos[0]), Vector3d::UnitX()) * AngleAxisd(-(M_PI / 2 + pos[1]), Vector3d::UnitZ()))
-          .toRotationMatrix();
+      return AngleAxisd(-(M_PI / 2 - pos[0]), Vector3d::UnitX()) * AngleAxisd(-(M_PI / 2 + pos[1]), Vector3d::UnitZ());
     }
 
     // eigen wrapper
@@ -105,12 +104,18 @@ namespace coordinate_converter
       return pos;
     }
 
+    // pos与origin均为纬经度，计算pos在origin坐标系下的东北天坐标
     static Eigen::Vector3d LLH2ENU(const Eigen::Vector3d &pos, const Eigen::Vector3d &origin)
     {
-      Eigen::Vector3d origin_ecef = LLH2ECEF(origin);
-      Eigen::Matrix3d c_ne = Pos2Cne(origin);
-      Eigen::Vector3d local_enu = c_ne * (LLH2ECEF(pos) - origin_ecef);
-      return local_enu;
+      Eigen::Isometry3d Ten = Eigen::Translation3d(LLH2ECEF(origin)) * Pos2Qne(origin);
+      return Ten.inverse() * LLH2ECEF(pos);
+    }
+
+    // pos为origin下的enu坐标，orign为纬经度
+    static Eigen::Vector3d ENU2LLH(const Eigen::Vector3d &pos, const Eigen::Vector3d &origin)
+    {
+      Eigen::Isometry3d Ten = Eigen::Translation3d(LLH2ECEF(origin)) * Pos2Qne(origin);
+      return ECEF2LLH(Ten * pos);
     }
 
     Eigen::Vector3d LLH2ENU(const Eigen::Vector3d &pos) const
@@ -122,23 +127,6 @@ namespace coordinate_converter
     {
       assert(!Ten_.translation().isZero(1e-12));
       return ECEF2LLH(Ten_ * pos);
-    }
-
-    static Eigen::Vector3d ENU2LLH(const Eigen::Vector3d &pos, const Eigen::Vector3d &origin)
-    {
-      Eigen::Vector3d const origin_ecef = LLH2ECEF(origin);
-      Eigen::Matrix3d const c_ne = Pos2Cne(origin);
-      Eigen::Vector3d const pos_llh = ECEF2LLH(c_ne.transpose() * pos + origin_ecef);
-      return pos_llh;
-    }
-
-    static Eigen::Isometry3d Tn0n1(const Eigen::Vector3d &pos, const Eigen::Vector3d &origin)
-    {
-      using namespace Eigen;
-      Matrix3d const Cn0_e = Pos2Cne(origin);
-      Matrix3d const Cn1_e = Pos2Cne(pos);
-      Isometry3d const T_n0_n1 = Translation3d(LLH2ENU(pos, origin)) * Quaterniond(Cn0_e * Cn1_e.transpose());
-      return T_n0_n1;
     }
 
   public:
