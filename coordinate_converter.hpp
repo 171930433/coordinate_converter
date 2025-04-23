@@ -48,8 +48,7 @@ namespace coordinate_converter
 
     void SetOrigin(Eigen::Vector3d const &origin)
     {
-      origin_ecef_ = LLH2ECEF(origin);
-      origin_cne_ = Pos2Cne(origin);
+      Ten_ = Eigen::Translation3d(LLH2ECEF(origin)) * Eigen::Quaterniond(Pos2Cne(origin));
     }
 
   public:
@@ -88,11 +87,8 @@ namespace coordinate_converter
     static Eigen::Matrix3d Pos2Cne(const Eigen::Vector3d &pos)
     {
       using namespace Eigen;
-      double const &b = pos[0];
-      double const &l = pos[1];
-      Matrix3d re = (AngleAxisd(-(M_PI / 2 - b), Vector3d::UnitX()) * AngleAxisd(-(M_PI / 2 + l), Vector3d::UnitZ()))
-                        .toRotationMatrix();
-      return re;
+      return (AngleAxisd(-(M_PI / 2 - pos[0]), Vector3d::UnitX()) * AngleAxisd(-(M_PI / 2 + pos[1]), Vector3d::UnitZ()))
+          .toRotationMatrix();
     }
 
     // eigen wrapper
@@ -119,13 +115,13 @@ namespace coordinate_converter
 
     Eigen::Vector3d LLH2ENU(const Eigen::Vector3d &pos) const
     {
-      assert(!origin_ecef_.isZero(1e-12));
-      return origin_cne_ * (LLH2ECEF(pos) - origin_ecef_);
+      assert(!Ten_.translation().isZero(1e-12));
+      return Ten_.inverse() * LLH2ECEF(pos);
     }
     Eigen::Vector3d ENU2LLH(const Eigen::Vector3d &pos) const
     {
-      assert(!origin_ecef_.isZero(1e-12));
-      return ECEF2LLH(origin_ecef_ + origin_cne_.transpose() * pos);
+      assert(!Ten_.translation().isZero(1e-12));
+      return ECEF2LLH(Ten_ * pos);
     }
 
     static Eigen::Vector3d ENU2LLH(const Eigen::Vector3d &pos, const Eigen::Vector3d &origin)
@@ -146,8 +142,7 @@ namespace coordinate_converter
     }
 
   public:
-    Eigen::Vector3d origin_ecef_{0, 0, 0};
-    Eigen::Matrix3d origin_cne_ = Eigen::Matrix3d::Identity();
+    Eigen::Isometry3d Ten_ = Eigen::Isometry3d::Identity();
 
   public:
     static constexpr double W(const double B_) { return sqrt(1 - pow(_e1 * sin(B_), 2)); }
