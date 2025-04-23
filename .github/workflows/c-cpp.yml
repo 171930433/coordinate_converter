@@ -8,16 +8,31 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build libeigen3-dev libgtest-dev libgflags-dev libgoogle-glog-dev
+
+    - name: Configure (Debug)
+      run: cmake --preset debug
+
+    - name: Build (Debug)
+      run: cmake --build out/build/debug
+
+    - name: Test (Debug)
+      run: ctest --preset=debug_test
+
+    - name: Configure (Release)
+      run: cmake --preset release
+
+    - name: Build (Release)
+      run: cmake --build out/build/release
+
+    - name: Test (Release)
+      run: ctest --preset=release_test
+

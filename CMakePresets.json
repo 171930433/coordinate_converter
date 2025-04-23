@@ -30,8 +30,22 @@
   ],
   "buildPresets": [
     {
-      "name": "build",
+      "name": "debug_build",
       "configurePreset": "debug"
+    },
+    {
+      "name": "release_build",
+      "configurePreset": "release"
     }
-  ]
+  ],
+  "testPresets": [
+    {
+      "name": "debug_test",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release_test",
+      "configurePreset": "release"
+    }
+  ] 
 }
