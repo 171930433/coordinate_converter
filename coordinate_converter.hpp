@@ -48,7 +48,7 @@ namespace coordinate_converter
 
     void SetOrigin(Eigen::Vector3d const &origin)
     {
-      Ten_ = Eigen::Translation3d(LLH2ECEF(origin)) * Pos2Qne(origin).conjugate();
+      Ten_ = Eigen::Translation3d(LLH2ECEF(origin)) * Pos2Qen(origin);
     }
 
   public:
@@ -89,10 +89,19 @@ namespace coordinate_converter
       using namespace Eigen;
       return AngleAxisd(-(M_PI / 2 - pos[0]), Vector3d::UnitX()) * AngleAxisd(-(M_PI / 2 + pos[1]), Vector3d::UnitZ());
     }
-
     Eigen::Quaterniond Pos2Qne() const
     {
       return Eigen::Quaterniond(Ten_.linear()).conjugate();
+    }
+
+    static Eigen::Quaterniond Pos2Qen(const Eigen::Vector3d &pos)
+    {
+      return Pos2Qne(pos).conjugate();
+    }
+
+    Eigen::Quaterniond Pos2Qen() const
+    {
+      return Eigen::Quaterniond(Ten_.linear());
     }
 
     // eigen wrapper
@@ -112,14 +121,14 @@ namespace coordinate_converter
     // pos与origin均为纬经度，计算pos在origin坐标系下的东北天坐标
     static Eigen::Vector3d LLH2ENU(const Eigen::Vector3d &pos, const Eigen::Vector3d &origin)
     {
-      Eigen::Isometry3d Ten = Eigen::Translation3d(LLH2ECEF(origin)) * Pos2Qne(origin).conjugate();
+      Eigen::Isometry3d Ten = Eigen::Translation3d(LLH2ECEF(origin)) * Pos2Qen(origin);
       return Ten.inverse() * LLH2ECEF(pos);
     }
 
     // pos为origin下的enu坐标，orign为纬经度
     static Eigen::Vector3d ENU2LLH(const Eigen::Vector3d &pos, const Eigen::Vector3d &origin)
     {
-      Eigen::Isometry3d Ten = Eigen::Translation3d(LLH2ECEF(origin)) * Pos2Qne(origin).conjugate();
+      Eigen::Isometry3d Ten = Eigen::Translation3d(LLH2ECEF(origin)) * Pos2Qen(origin);
       return ECEF2LLH(Ten * pos);
     }
 
