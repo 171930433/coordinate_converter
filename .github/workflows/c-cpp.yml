@@ -22,7 +22,7 @@ jobs:
       run: cmake --preset debug
 
     - name: Build (Debug)
-      run: cmake --build out/build/debug
+      run: cmake --build --preset=debug_build
 
     - name: Test (Debug)
       run: ctest --preset=debug_test
@@ -31,7 +31,7 @@ jobs:
       run: cmake --preset release
 
     - name: Build (Release)
-      run: cmake --build out/build/release
+      run: cmake --build --preset=release_build
 
     - name: Test (Release)
       run: ctest --preset=release_test

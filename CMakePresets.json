@@ -3,26 +3,42 @@
   "configurePresets": [
     {
       "name": "debug",
-      "displayName": "debug 使用工具链文件配置预设",
-      "description": "设置 Ninja 生成器、版本和安装目录",
+      "displayName": "debug config",
+      "description": "debug config",
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_TOOLCHAIN_FILE": "",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "ENABLE_TESTING": "OFF",
+        "BUILD_TOOLS" : "OFF"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "release config",
+      "description": "release config",
+      "inherits": "debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "ENABLE_TESTING": "OFF",
+        "BUILD_TOOLS" : "OFF"
+      }
+    },
+    {
+      "name": "debug_test_config",
+      "inherits": "debug",
+      "cacheVariables": {
         "ENABLE_TESTING": "ON",
         "BUILD_TOOLS" : "ON"
       }
     },
     {
-      "name": "release",
-      "displayName": "release 使用工具链文件配置预设",
-      "description": "设置 Unix Makefiles 生成器、版本和安装目录",
-      "inherits": "debug",
+      "name": "release_test_config",
+      "inherits": "release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "ENABLE_TESTING": "ON",
         "BUILD_TOOLS" : "ON"
       }
@@ -41,11 +57,11 @@
   "testPresets": [
     {
       "name": "debug_test",
-      "configurePreset": "debug"
+      "configurePreset": "debug_test_config"
     },
     {
       "name": "release_test",
-      "configurePreset": "release"
+      "configurePreset": "release_test_config"
     }
   ] 
 }
