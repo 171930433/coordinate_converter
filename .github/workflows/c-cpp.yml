@@ -19,19 +19,19 @@ jobs:
         sudo apt-get install -y cmake ninja-build libeigen3-dev libgtest-dev libgflags-dev libgoogle-glog-dev
 
     - name: Configure (Debug)
-      run: cmake --preset debug
+      run: cmake --preset=debug_test_config
 
     - name: Build (Debug)
-      run: cmake --build --preset=debug_build
+      run: cmake --build --preset=debug_build_test
 
     - name: Test (Debug)
       run: ctest --preset=debug_test
 
     - name: Configure (Release)
-      run: cmake --preset release
+      run: cmake --preset=release_test_config
 
     - name: Build (Release)
-      run: cmake --build --preset=release_build
+      run: cmake --build --preset=release_build_test
 
     - name: Test (Release)
       run: ctest --preset=release_test

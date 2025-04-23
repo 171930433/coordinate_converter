@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 3,
   "configurePresets": [
     {
       "name": "debug",
@@ -12,7 +12,7 @@
         "CMAKE_TOOLCHAIN_FILE": "",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "ENABLE_TESTING": "OFF",
-        "BUILD_TOOLS" : "OFF"
+        "BUILD_TOOLS": "OFF"
       }
     },
     {
@@ -24,7 +24,7 @@
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "ENABLE_TESTING": "OFF",
-        "BUILD_TOOLS" : "OFF"
+        "BUILD_TOOLS": "OFF"
       }
     },
     {
@@ -32,7 +32,7 @@
       "inherits": "debug",
       "cacheVariables": {
         "ENABLE_TESTING": "ON",
-        "BUILD_TOOLS" : "ON"
+        "BUILD_TOOLS": "ON"
       }
     },
     {
@@ -40,18 +40,18 @@
       "inherits": "release",
       "cacheVariables": {
         "ENABLE_TESTING": "ON",
-        "BUILD_TOOLS" : "ON"
+        "BUILD_TOOLS": "ON"
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "debug_build",
-      "configurePreset": "debug"
+      "name": "debug_build_test",
+      "configurePreset": "debug_test_config"
     },
     {
-      "name": "release_build",
-      "configurePreset": "release"
+      "name": "release_build_test",
+      "configurePreset": "release_test_config"
     }
   ],
   "testPresets": [
@@ -63,5 +63,5 @@
       "name": "release_test",
       "configurePreset": "release_test_config"
     }
-  ] 
+  ]
 }
