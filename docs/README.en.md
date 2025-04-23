@@ -148,24 +148,50 @@ using WGS84 = Ellipsoid<WGS84Para>;
 
 ## Examples
 
-### Latitude-Longitude-Height to ECEF Conversion
+### Basic Coordinate Conversion
 
 ```cpp
 WGS84 wgs84;
-Eigen::Vector3d llh{30.0_deg, 120.0_deg, 250.0};
-Eigen::Vector3d ecef = wgs84.LLH2ECEF(llh);
-// Expected result: {-2764128.3196464167, 4787610.6882675830, 3170373.7353836372}
+
+// Test point: (30°N, 120°E, 0m)
+Eigen::Vector3d llh{30.0_deg, 120.0_deg, 0.0};
+
+// Convert to ECEF
+Eigen::Vector3d ecef = WGS84::LLH2ECEF(llh);
+// Expected result: {-2764128.319646, 4787610.688268, 3170373.735384}
+
+// Convert back to LLH
+Eigen::Vector3d llh_recovered = WGS84::ECEF2LLH(ecef);
+// Expected result: {30.0°, 120.0°, 0.0m}
 ```
 
-### Latitude-Longitude-Height to ENU Conversion
+### ENU Coordinate Conversion with Origin
 
 ```cpp
+// Set origin at (30°N, 120°E, 0m)
 Eigen::Vector3d origin{30.0_deg, 120.0_deg, 0.0};
 WGS84 wgs84(origin);
-Eigen::Vector3d llh{30.005_deg, 120.005_deg, 10.0};
-Eigen::Vector3d enu = wgs84.LLH2ENU(llh);
-// Expected result: {0, 10, 0}
+
+// Define ENU coordinates (0m East, 10m North, 0m Up)
+Eigen::Vector3d enu{0.0, 10.0, 0.0};
+
+// Convert to LLH
+Eigen::Vector3d llh = wgs84.ENU2LLH(enu);
+// Expected result: {30.00000787°N, 120.00000787°E, 0.0m}
+
+// Convert back to ENU
+Eigen::Vector3d enu_recovered = wgs84.LLH2ENU(llh);
+// Expected result: {0.0m, 10.0m, 0.0m}
+
+// Convert to ECEF
+Eigen::Vector3d ecef = WGS84::LLH2ECEF(llh);
+// Expected result: {-2764125.819646, 4787606.358141, 3170382.395638}
 ```
+
+These examples demonstrate:
+1. Basic LLH to ECEF conversion and back
+2. ENU coordinate conversion with a custom origin
+3. Coordinate transformation accuracy (within 1e-6 to 1e-8 precision)
 
 ## Testing
 

@@ -40,8 +40,7 @@ TEST(Ellipsoid, origin)
 
   Eigen::Vector3d llh = wgs84.ENU2LLH(enu_true);
   Eigen::Vector3d enu = wgs84.LLH2ENU(llh);
-  Eigen::Vector3d ecef = wgs84.LLH2ECEF(llh);
-
+  Eigen::Vector3d ecef = WGS84::LLH2ECEF(llh);
 
   GTEST_LOG_(INFO) << "enu 2 llh " << std::setprecision(6) << std::fixed << (llh).transpose();
   GTEST_LOG_(INFO) << "llh 2 enu " << std::setprecision(6) << std::fixed << (enu).transpose();

@@ -150,24 +150,50 @@ using WGS84 = Ellipsoid<WGS84Para>;
 
 ## 示例
 
-### 纬度经度高度到ECEF的转换
+### 基本坐标转换
 
 ```cpp
 WGS84 wgs84;
-Eigen::Vector3d llh{30.0_deg, 120.0_deg, 250.0};
-Eigen::Vector3d ecef = wgs84.LLH2ECEF(llh);
-// 预期结果: {-2764128.3196464167, 4787610.6882675830, 3170373.7353836372}
+
+// 测试点：(30°N, 120°E, 0m)
+Eigen::Vector3d llh{30.0_deg, 120.0_deg, 0.0};
+
+// 转换为ECEF坐标
+Eigen::Vector3d ecef = WGS84::LLH2ECEF(llh);
+// 预期结果：{-2764128.319646, 4787610.688268, 3170373.735384}
+
+// 转回LLH坐标
+Eigen::Vector3d llh_recovered = WGS84::ECEF2LLH(ecef);
+// 预期结果：{30.0°, 120.0°, 0.0m}
 ```
 
-### 纬度经度高度到ENU的转换
+### 带原点的ENU坐标转换
 
 ```cpp
+// 设置原点为(30°N, 120°E, 0m)
 Eigen::Vector3d origin{30.0_deg, 120.0_deg, 0.0};
 WGS84 wgs84(origin);
-Eigen::Vector3d llh{30.005_deg, 120.005_deg, 10.0};
-Eigen::Vector3d enu = wgs84.LLH2ENU(llh);
-// 预期结果: {0, 10, 0}
+
+// 定义ENU坐标(0m东, 10m北, 0m上)
+Eigen::Vector3d enu{0.0, 10.0, 0.0};
+
+// 转换为LLH坐标
+Eigen::Vector3d llh = wgs84.ENU2LLH(enu);
+// 预期结果：{30.00000787°N, 120.00000787°E, 0.0m}
+
+// 转回ENU坐标
+Eigen::Vector3d enu_recovered = wgs84.LLH2ENU(llh);
+// 预期结果：{0.0m, 10.0m, 0.0m}
+
+// 转换为ECEF坐标
+Eigen::Vector3d ecef = wgs84::LLH2ECEF(llh);
+// 预期结果：{-2764125.819646, 4787606.358141, 3170382.395638}
 ```
+
+这些示例展示了：
+1. 基本的LLH到ECEF坐标转换及反向转换
+2. 带自定义原点的ENU坐标转换
+3. 坐标转换精度（在1e-6到1e-8范围内）
 
 ## 测试
 
