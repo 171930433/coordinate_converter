@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10.0)
 
 project(coordinate_converter VERSION 0.1.0 LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Eigen3 CONFIG REQUIRED)
@@ -39,7 +39,7 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 # 安装头文件
-install(FILES coordinate_converter.hpp
+install(FILES coordinate_converter.hpp time_system.hpp
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/coordinate_converter
 )
 
